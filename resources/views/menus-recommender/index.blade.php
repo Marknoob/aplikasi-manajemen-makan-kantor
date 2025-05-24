@@ -250,32 +250,33 @@
                 });
             }
 
-
+            const foodImagePath = "{{ asset('images/food.png') }}";
+            
             // Render card  ke tampilan
             tempGeneratedMenu.forEach(item => {
                 const cardContainers = document.querySelectorAll('.day-card[data-date="' + item.tanggal_pelaksanaan + '"]');
                 cardContainers.forEach(container => {
                     container.innerHTML = `
-                            <div class="rounded-2 p-2" style="
-                                width: 200px;
-                                height: 200px;
-                                border: 1px solid #1971c2;
-                                text-align: center;
-                                background-color: #a5d8ff;
-                                position: relative;
-                                overflow: hidden;>
-                                <img src="{{ asset('images/food.png') }}" alt="Menu Image" style="
-                                    width: 100px;
-                                    height: 100px;
-                                    border-radius: 50%;
-                                    object-fit: cover;
-                                    margin: 10px auto;
-                                    display: block;
-                                " />
-                                <h6>${item.nama_menu}</h6>
-                                <small>${item.nama_vendor}</small>
-                            </div>
-                        `;
+                        <div class="rounded-2 p-2" style="
+                            width: 200px;
+                            height: 200px;
+                            border: 1px solid #1971c2;
+                            text-align: center;
+                            background-color: #a5d8ff;
+                            position: relative;
+                            overflow: hidden;">
+                            <img src="${foodImagePath}" alt="Menu Image" style="
+                                width: 100px;
+                                height: 100px;
+                                border-radius: 50%;
+                                object-fit: cover;
+                                margin: 10px auto;
+                                display: block;
+                            " />
+                            <h6>${item.nama_menu}</h6>
+                            <small>${item.nama_vendor}</small>
+                        </div>
+                    `;
                 });
 
                 // Untuk tombol Remove
