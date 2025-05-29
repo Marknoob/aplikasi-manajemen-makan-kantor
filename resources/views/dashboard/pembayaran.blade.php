@@ -2,7 +2,7 @@
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="mb-0">Dashboard - Pembayaran</h2>
-            <form method="GET" action="{{ route('dashboard.pengeluaran') }}">
+            <form method="GET" action="{{ route('dashboard.pembayaran') }}">
                 <input type="month" name="periode" value="{{ request('periode', now()->format('Y-m')) }}" class="form-control"
                     onchange="this.form.submit()" style="width: 200px;">
             </form>

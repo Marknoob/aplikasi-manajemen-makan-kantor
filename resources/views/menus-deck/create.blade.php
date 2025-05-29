@@ -3,8 +3,7 @@
         <div class="h2 mb-4 d-flex justify-content-between">
             <a href="{{ route('menus-deck.index') }}" class="text-decoration-none text-dark">Menus Deck</a>
             <!-- Tombol Trigger Modal -->
-            <button type="button" class="btn text-white" style="background-color: #203454;" data-bs-toggle="modal"
-                data-bs-target="#modalRekomendasi">
+            <button type="button" class="btn text-white" style="background-color: #203454;" id="openModalBtn">
                 Gunakan Rekomendasi Menu
                 <i class="fa-solid fa-wand-magic-sparkles ms-3" style="color: #FFD43B;"></i>
             </button>
@@ -202,5 +201,12 @@
                 }
             });
         }
+
+        // Open modal rekomendasi
+        document.getElementById('openModalBtn').addEventListener('click', function () {
+            const modal = new bootstrap.Modal(document.getElementById('modalRekomendasi'));
+            modal.show();
+        });
+
     </script>
 </x-app-layout>

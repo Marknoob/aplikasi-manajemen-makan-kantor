@@ -82,6 +82,18 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('vendors.index')" :active="request()->routeIs('vendors.*')">
+                {{ __('Vendors') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('menus.index')" :active="request()->routeIs('menus.*')">
+                {{ __('Menus') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('menus-deck.index')" :active="request()->routeIs('menus-deck.*')">
+                {{ __('Menus Deck') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('menus-recommender.index')" :active="request()->routeIs('menus-recommender.*')">
+                {{ __('Menus Recommender') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->

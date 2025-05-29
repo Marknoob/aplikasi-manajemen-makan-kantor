@@ -88,8 +88,8 @@ class MenusRecomenderController extends Controller
 
         $menus = Menu::with('vendor:id,id,nama')
             ->whereNull('terakhir_dipilih')
-            ->get(['id', 'nama_menu', 'vendor_id']);
-            
+            ->get(['id', 'nama_menu', 'kategori_bahan_utama', 'harga', 'vendor_id']);
+
         return view('menus-recommender.index', compact('weeks', 'bulanTahun', 'tahun', 'bulan', 'weeksCount', 'menus'));
     }
 

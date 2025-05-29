@@ -36,6 +36,7 @@
             </main>
         </div>
 
+        <script src="{{ asset('assets/jquery.js') }}"></script>
         <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
     </body>
 </html>
