@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('menu_deck_payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('menu_deck_id')->constrained('menus_deck')->onDelete('cascade');
+            $table->foreignId('menu_deck_id')->constrained('menus_deck');
             $table->string('deskripsi_pembayaran');
             $table->decimal('jumlah_bayar', 12, 2);
             $table->date('tanggal_bayar');
             $table->string('metode_pembayaran'); // Transfer / Cash / dll
             $table->string('file_path')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
