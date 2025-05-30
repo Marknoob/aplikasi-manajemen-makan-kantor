@@ -8,9 +8,23 @@ use Illuminate\Http\Request;
 
 class VendorsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('vendors.index', ['vendors' => Vendor::all()]);
+        $search = $request->input('search');
+
+        $query = Vendor::where('is_active', true);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', '%' . $search . '%')
+                ->orWhere('kontak', 'like', '%' . $search . '%');
+            });
+        }
+
+        $vendors = $query->orderBy('created_at', 'desc')
+                ->paginate(10);
+
+        return view('vendors.index', compact('vendors'));
     }
 
     public function create()

@@ -219,19 +219,26 @@
 
 
         function applyFilter() {
-            maxPrice = parseInt(document.getElementById('maxPriceInput').value);
+            // MaxPrice
+            maxPrice = document.getElementById('maxPriceInput');
+            const inputValue = maxPriceInput.value.trim();
+            maxPrice = inputValue ? parseInt(inputValue, 10) : 999999;
+
+            if (isNaN(maxPrice)) {
+                maxPrice = 999999;
+            }
+
+            // Unique Kategori Bahan Utama
             uniqueKategoriBahanUtama = document.getElementById('uniqueKategoriCheckbox').checked;
         }
 
         // Tutup modal
         document.getElementById('applyFilterBtn').addEventListener('click', function () {
 
-            // maxPrice = parseInt(document.getElementById('maxPriceInput').value);
-            // uniqueKategoriBahanUtama = document.getElementById('uniqueKategoriCheckbox').checked;
             applyFilter();
 
             // Simpan atau gunakan filter di sini
-            console.log("Filter diterapkan:", { maxPrice, uniqueKategoriBahanUtama });
+            // console.log("Filter diterapkan:", { maxPrice, uniqueKategoriBahanUtama });
 
             // Tutup modal seperti modal konfirmasi
             const modalElement = document.getElementById('filterModal');

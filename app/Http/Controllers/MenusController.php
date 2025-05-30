@@ -9,12 +9,25 @@ use Illuminate\Http\Request;
 
 class MenusController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('menus.index', [
-            'menus' => Menu::orderBy('created_at', 'desc')->get()
-        ]);
+        $search = $request->input('search');
+
+        $query = Menu::where('is_active', true);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_menu', 'like', '%' . $search . '%')
+                ->orWhere('kategori_bahan_utama', 'like', '%' . $search . '%');
+            });
+        }
+
+        $menus = $query->orderBy('created_at', 'desc')
+                ->paginate(10);
+
+        return view('menus.index', compact('menus'));
     }
+
 
     public function create()
     {
