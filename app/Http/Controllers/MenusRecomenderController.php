@@ -86,9 +86,9 @@ class MenusRecomenderController extends Controller
 
         $weeksCount = count($weeks);
 
-        $menus = Menu::with('vendor:id,id,nama')
+        $menus = Menu::with('vendor:id,id,nama', 'category:id,kategori_bahan_utama')
             ->whereNull('terakhir_dipilih')
-            ->get(['id', 'nama_menu', 'kategori_bahan_utama', 'harga', 'vendor_id']);
+            ->get(['id', 'nama_menu', 'vendor_id', 'category_id', 'harga']);
 
         return view('menus-recommender.index', compact('weeks', 'bulanTahun', 'tahun', 'bulan', 'weeksCount', 'menus'));
     }

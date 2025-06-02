@@ -277,7 +277,7 @@
             function getRandomUniqueMenu(count) {
                 const result = [];
                 const usedKategori = new Set();
-                let listKategoriBahanUtama = new Set(availableMenus.map(m => m.kategori_bahan_utama)).size;
+                let listKategoriBahanUtama = new Set(availableMenus.map(m => m.category.kategori_bahan_utama)).size;
                 let tempAvailableMenus = [...availableMenus];
 
                 // Filter availableMenus jika harga diset
@@ -290,7 +290,7 @@
                     if (usedKategori.size === listKategoriBahanUtama) {
                         console.log("Semua kategori sudah digunakan.");
                         usedKategori.clear();
-                        listKategoriBahanUtama = new Set(availableMenus.map(m => m.kategori_bahan_utama)).size;
+                        listKategoriBahanUtama = new Set(availableMenus.map(m => m.category.kategori_bahan_utama)).size;
                         tempAvailableMenus = [...availableMenus]; // reset ke awal
                     }
 
@@ -302,7 +302,7 @@
 
                     const randomIndex = Math.floor(Math.random() * tempAvailableMenus.length);
                     const menu = tempAvailableMenus[randomIndex];
-                    const kategori = menu.kategori_bahan_utama;
+                    const kategori = menu.category.kategori_bahan_utama;
 
                     // hapus dari temp selalu
                     tempAvailableMenus.splice(randomIndex, 1);

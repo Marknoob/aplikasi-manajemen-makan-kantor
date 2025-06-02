@@ -28,7 +28,7 @@
                             </td>
                             <td>{{ $menu->menu->nama_menu }}</td>
                             <td>{{ $menu->tanggal_pelaksanaan ? \Carbon\Carbon::parse($menu->tanggal_pelaksanaan)->format('d M Y') : '-' }}</td>
-                            <td>Rp {{ number_format($menu->total_biaya ?? 0, 0, ',', '.') }}</td>
+                            <td>Rp {{ number_format($menu->total_pembayaran ?? 0, 0, ',', '.') }}</td>
                         </tr>
                     @endforeach
                 </tbody>

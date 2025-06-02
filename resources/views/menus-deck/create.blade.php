@@ -31,6 +31,16 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="harga_menu" class="form-label">Harga Menu</label>
+                    <input type="number" id="harga_menu" name="harga_menu" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label for="jumlah_vote" class="form-label">Jumlah Vote</label>
+                    <input type="number" class="form-control" id="jumlah_vote" name="jumlah_vote">
+                </div>
+
+                <div class="mb-3">
                     <label for="tanggal_pelaksanaan" class="form-label">Tanggal Pelaksanaan</label>
                     <input type="date" class="form-control" id="tanggal_pelaksanaan" name="tanggal_pelaksanaan"
                         value="{{ old('tanggal_pelaksanaan', $tanggal_pelaksanaan ?? '') }}" required readonly>
@@ -85,7 +95,7 @@
                                         </button>
                                     </td>
                                     <td>{{ $menu->nama_menu }}</td>
-                                    <td>{{ $menu->kategori_bahan_utama }}</td>
+                                    <td>{{ $menu->category->kategori_bahan_utama }}</td>
                                     <td>{{ $menu->vendor_id }}</td>
                                     <td>
                                         {{ isset($recommendations[$menu->id]) ? number_format($recommendations[$menu->id] * 100, 2) . '%' : '-' }}
@@ -122,57 +132,67 @@
             modal.hide();
         }
 
-        function calculateMagnitude(vector) {
-            return Math.sqrt(vector.reduce((sum, v) => sum + v * v, 0));
+        function getSimilarityScores(menuTarget, menu) {
+            console.log
+            const componentList = [];
+
+            const addUniqueComponent = (details) => {
+                details.forEach(item => {
+                    const componentId = item.component.id;
+                    if (!componentList.includes(componentId)) {
+                        componentList.push(componentId);
+                    }
+                });
+            };
+
+            // Kumpulkan semua komponen unik dari kedua menu
+            addUniqueComponent(menuTarget.details);
+            addUniqueComponent(menu.details);
+
+            // Buat vektor biner untuk kedua menu
+            const buildVector = (details) => {
+                return componentList.map(componentId =>
+                    details.some(item => item.component.id === componentId) ? 1 : 0
+                );
+            };
+
+            const componentMenu1 = buildVector(menuTarget.details);
+            const componentMenu2 = buildVector(menu.details);
+
+            // Hitung cosine similarity
+            const dotProduct = componentMenu1.reduce((acc, val, i) => acc + val * componentMenu2[i], 0);
+            const magnitude1 = Math.sqrt(componentMenu1.reduce((acc, val) => acc + val * val, 0));
+            const magnitude2 = Math.sqrt(componentMenu2.reduce((acc, val) => acc + val * val, 0));
+            console.log(dotProduct, magnitude1, magnitude2);
+
+            const similarity = magnitude1 && magnitude2 ? dotProduct / (magnitude1 * magnitude2) : 0;
+
+            console.log(menuTarget.nama_menu, menu.nama_menu, similarity);
+            return similarity;
         }
 
-        function calculateDotProduct(vector1, vector2) {
-            return vector1.reduce((sum, v, i) => sum + v * vector2[i], 0);
-        }
+        function generateSimilarityResults(menuTargetId) {
+            const menuTarget = menus.find(menu => menu.id == menuTargetId);
+            if (!menuTarget) {
+                console.error('Menu target tidak ditemukan');
+                return;
+            }
+            // console.log(menus);
 
-        function cosineSimilarity(vector1, vector2) {
-            const dot = calculateDotProduct(vector1, vector2);
-            const mag1 = calculateMagnitude(vector1);
-            const mag2 = calculateMagnitude(vector2);
-            return (mag1 * mag2) ? dot / (mag1 * mag2) : 0;
-        }
+            const results = [];
+            // Bandingkan dengan semua menu
+            menus.forEach(menu => {
+                const similarity = getSimilarityScores(menuTarget, menu);
+                results.push({
+                    id: menu.id,
+                    nama_menu: menu.nama_menu,
+                    kategori_bahan_utama: menu.category.kategori_bahan_utama,
+                    vendor_id: menu.vendor_id,
+                    similarity: similarity,
+                });
+            });
 
-        function getSimilarityScores(menuTargetId) {
-            const menuTarget = menus.find(m => m.id == menuTargetId);
-            if (!menuTarget) return [];
-
-            const targetVector = [
-                menuTarget.karbohidrat.toLowerCase(),
-                menuTarget.protein.toLowerCase(),
-                menuTarget.sayur.toLowerCase(),
-                menuTarget.buah.toLowerCase(),
-                menuTarget.kategori_bahan_utama.toLowerCase(),
-                menuTarget.vendor_id.toString()
-            ];
-
-            const C = [1, 1, 1, 1, 1, 1];
-
-            const result = menus.map(menu => {
-                const inputVector = [
-                    menu.karbohidrat.toLowerCase(),
-                    menu.protein.toLowerCase(),
-                    menu.sayur.toLowerCase(),
-                    menu.buah.toLowerCase(),
-                    menu.kategori_bahan_utama.toLowerCase(),
-                    menu.vendor_id.toString()
-                ];
-
-                const A = inputVector.map((val, i) => val === targetVector[i] ? 1 : 0);
-                const similarity = cosineSimilarity(A, C);
-
-                return {
-                    ...menu,
-                    similarity: similarity
-                };
-            }).filter(m => m.similarity > 0)
-                .sort((a, b) => b.similarity - a.similarity);
-
-            return result;
+            return results;
         }
 
 
@@ -181,7 +201,7 @@
             const tableBody = document.querySelector('#tabelRekomendasi tbody');
             tableBody.innerHTML = '';
 
-            const results = getSimilarityScores(selectedTargetId);
+            const results = generateSimilarityResults(selectedTargetId);
 
             results.forEach(menu => {
                 const row = document.createElement('tr');

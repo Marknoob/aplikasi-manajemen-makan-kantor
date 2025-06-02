@@ -27,13 +27,13 @@
                                 <a class="text-decoration-none text-reset" href="{{ route('menus.edit', $menu->id)}}">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <a class="text-decoration-none text-reset" href="{{ route('menus.show', $menu->id)}}">
+                                {{-- <a class="text-decoration-none text-reset" href="{{ route('menus.show', $menu->id)}}">
                                     <i class="fa-brands fa-readme"></i>
-                                </a>
+                                </a> --}}
                             </td>
                             <td>{{$menu->nama_menu}}</td>
-                            <td>{{$menu->kategori_bahan_utama}}</td>
-                            <td>{{$menu->vendor_id}}</td>
+                            <td>{{$menu->category->kategori_bahan_utama}}</td>
+                            <td>{{$menu->vendor->nama}}</td>
                         </tr>
                     @endforeach
                 </tbody>

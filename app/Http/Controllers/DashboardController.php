@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\MenuDeckExpense;
 use App\Models\MenuDeckPayment;
 use App\Models\MenusDeck;
+use App\Models\Menu;
+use App\Models\MenusDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -92,17 +94,12 @@ class DashboardController extends Controller
         foreach ($menusDeck as $deck) {
             $payments = MenuDeckPayment::where('menu_deck_id', $deck->id)->get();
 
-            if ($payments != null) {
-                $expenses = MenuDeckExpense::where('menu_deck_id', $deck->id)->get();
-
-                $total_biaya = 0;
-                foreach ($expenses as $expense) {
-                    $total_biaya += $expense->jumlah_biaya;
-                }
-
-                // Simpan total biaya ke dalam object
-                $deck->total_biaya = $total_biaya;
+            // Total pembayaran
+            $total_pembayaran = 0;
+            foreach ($payments as $payment) {
+                $total_pembayaran += $payment->jumlah_bayar;
             }
+            $deck->total_pembayaran = $total_pembayaran;
         }
 
         return view('dashboard.pengeluaran', compact('menusDeck', 'periode'));
@@ -154,5 +151,30 @@ class DashboardController extends Controller
             }
         }
         return view('dashboard.pembayaran', compact('menusDeck'));
+    }
+
+    public function cosineSimilarity()
+    {
+        $idMenu1 = 2;
+        $idMenu2 = 4;
+        // Ambil semua menu (misal untuk dropdown atau referensi)
+        $allMenus = Menu::all();
+
+        // Ambil menu dengan ID 1 dan 3
+        $menu1 = Menu::with('details.component')->find($idMenu1);
+        $menu2 = Menu::with('details.component')->find($idMenu2);
+
+        // Jika ingin ambil hanya detail aktif
+        $menu1Details = MenusDetail::with('component')
+            ->where('menu_id', $idMenu1)
+            ->where('is_active', true)
+            ->get();
+
+        $menu2Details = MenusDetail::with('component')
+            ->where('menu_id', $idMenu2)
+            ->where('is_active', true)
+            ->get();
+
+        return view('cosine-similarity', compact('allMenus', 'menu1', 'menu2', 'menu1Details', 'menu2Details'));
     }
 }

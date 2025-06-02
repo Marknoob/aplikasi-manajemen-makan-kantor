@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('menus_deck', function (Blueprint $table) {
             $table->id();
             $table->foreignId('menu_id')->constrained('menus')->onDelete('cascade');
-            $table->integer('harga_menu')->default(0);
-            $table->integer('jumlah_vote')->default(0);
             $table->string('total_serve')->nullable();
+            $table->integer('harga_menu')->nullable();
+            $table->integer('jumlah_vote')->nullable();
             $table->boolean('status')->default(false); // confirmed or not-confirmed
             $table->date('tanggal_pelaksanaan')->nullable();
             $table->boolean('is_active')->default(true);

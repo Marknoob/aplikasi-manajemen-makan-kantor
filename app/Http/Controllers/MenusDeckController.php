@@ -36,11 +36,12 @@ class MenusDeckController extends Controller
         $current = $tanggalAwal->copy();
 
         $menusDecks = MenusDeck::with('menu.vendor')
-        ->whereBetween('tanggal_pelaksanaan', [$tanggalAwal, $tanggalAkhir])
-        ->get()
-        ->groupBy(function ($menuDeck) {
-            return Carbon::parse($menuDeck->tanggal_pelaksanaan)->format('Y-m-d');
-        });
+            ->whereBetween('tanggal_pelaksanaan', [$tanggalAwal, $tanggalAkhir])
+            ->where('is_active', true)
+            ->get()
+            ->groupBy(function ($menuDeck) {
+                return Carbon::parse($menuDeck->tanggal_pelaksanaan)->format('Y-m-d');
+            });
 
         while ($current <= $tanggalAkhir) {
             // Hanya ambil hari kerja (Senin–Jumat)
@@ -91,7 +92,10 @@ class MenusDeckController extends Controller
 
     public function create(Request $request)
     {
-        $menus = Menu::whereNull('terakhir_dipilih')->get();
+        $menus = Menu::with('details.component', 'category')
+            ->whereNull('terakhir_dipilih')
+            ->where('is_active', true)
+            ->get();
         $tanggal_pelaksanaan = $request->query('tanggal_pelaksanaan');
         return view('menus-deck.create', compact('menus', 'tanggal_pelaksanaan'));
     }
@@ -105,12 +109,16 @@ class MenusDeckController extends Controller
     {
         $menus = Menu::whereNull('terakhir_dipilih')
             ->orWhere('id', $menusDeck->menu_id)
+            ->where('is_active', true)
             ->get();
-        $expenses = MenuDeckExpense::where('menu_deck_id', $menusDeck->id)->get();
-        $payments = MenuDeckPayment::where('menu_deck_id', $menusDeck->id)->get();
+        $expenses = MenuDeckExpense::where('menu_deck_id', $menusDeck->id)
+            ->where('is_active', true)
+            ->get();
+        $payments = MenuDeckPayment::where('menu_deck_id', $menusDeck->id)
+            ->where('is_active', true)
+            ->get();
 
         if ($expenses != null && $payments != null) {
-            // $total_biaya = $menusDeck->menu->harga * $menusDeck->total_serve;
             $total_biaya = 0;
             foreach ($expenses as $expense) {
                 $total_biaya += $expense->jumlah_biaya;
@@ -140,53 +148,77 @@ class MenusDeckController extends Controller
         $request->validate([
             'menu_id' => 'required|exists:menus,id',
             'total_serve' => 'nullable|numeric|min:1',
+            'harga_menu' => 'nullable|numeric|min:0',
+            'jumlah_vote' => 'nullable|numeric|min:0',
             'tanggal_pelaksanaan' => 'nullable|date',
         ]);
+
+        $harga = Menu::where('id', $request->menu_id)->first()->harga;
 
         MenusDeck::create([
             'menu_id' => $request->menu_id,
             'total_serve' => $request->total_serve,
-            'status' => 0,
+            'harga_menu' => $request->harga_menu ?? $harga,
+            'jumlah_vote' => $request->jumlah_vote,
             'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
         ]);
 
         // Update Menu Terakhir Dipilih
-        Menu::where('id', $request->menu_id)->update([
-            'terakhir_dipilih' => $request->tanggal_pelaksanaan,
-        ]);
+        Menu::where('id', $request->menu_id)
+            ->update([
+                'terakhir_dipilih' => $request->tanggal_pelaksanaan,
+            ]);
 
         return redirect()->route('menus-deck.index')->with('success', 'Menu Deck berhasil ditambahkan.');
     }
 
     public function update(Request $request, MenusDeck $menusDeck)
     {
-        $request->validate([
-            'menu_id' => 'required|exists:menus,id',
-            'total_serve' => 'nullable|numeric|min:1',
-            'status' => 'required|boolean',
-            // 'tanggal_pelaksanaan' => 'nullable|date',
-        ]);
-        // dd($request->status);
+        if ($request->status == 0 || $request->status == 1) {
+            $request->validate([
+                'menu_id' => 'required|exists:menus,id',
+                'total_serve' => 'nullable|numeric|min:1',
+                'harga_menu' => 'nullable|numeric|min:0',
+                'jumlah_vote' => 'nullable|numeric|min:0',
+                'status' => 'required|boolean',
+            ]);
+        }
 
-        $menusDeck->update([
-            'menu_id' => $request->menu_id,
-            'total_serve' => $request->total_serve,
-            'status' => $request->status,
-            // 'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
-        ]);
+        if ($request->status == 0) {
+            $menusDeck->update([
+                'menu_id' => $request->menu_id,
+                'total_serve' => $request->total_serve,
+                'harga_menu' => $request->harga_menu,
+                'jumlah_vote' => $request->jumlah_vote,
+                'status' => $request->status,
+            ]);
+        }
 
         // Konfirmasi Menus Deck
         if ($request->status == 1) {
-            $menuCost = Menu::where('id', $request->menu_id)->first();
+            $menusDeck->update([
+                'status' => $request->status,
+            ]);
+            
             MenuDeckExpense::create([
                 'menu_deck_id' => $menusDeck->id,
                 'deskripsi_biaya' => "Biaya Pokok",
-                'jumlah_biaya' => $request->total_serve * $menuCost->harga,
+                'jumlah_biaya' => $request->total_serve * $request->harga_menu,
             ]);
 
             // Update Menu Terakhir Dipilih
-            Menu::where('id', $request->menu_id)->update([
-                'terakhir_dipilih' => $menusDeck->tanggal_pelaksanaan,
+            Menu::where('id', $request->menu_id)
+                ->update([
+                    'terakhir_dipilih' => $menusDeck->tanggal_pelaksanaan,
+                ]);
+        }
+
+        if ($request->status == 2) {
+            $request->validate([
+                'jumlah_vote' => 'required|numeric|min:0',
+            ]);
+            $menusDeck->update([
+                'jumlah_vote' => $request->jumlah_vote,
             ]);
         }
 

@@ -29,6 +29,25 @@
                         value="{{ $menusDeck->total_serve }}" {{ $menusDeck->status == 1 ? 'disabled' : '' }} required>
                 </div>
 
+                <div class="mb-3">
+                    <label for="harga_menu" class="form-label">Harga Menu</label>
+                    <input type="number" class="form-control" id="harga_menu" name="harga_menu"
+                        value="{{ $menusDeck->harga_menu }}" {{ $menusDeck->status == 1 ? 'disabled' : '' }} required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="jumlah_vote" class="form-label">Jumlah Vote</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" class="form-control" id="jumlah_vote" name="jumlah_vote"
+                            value="{{ $menusDeck->jumlah_vote }}">
+                        @if ($menusDeck->status == 1)
+                            <button type="button" class="btn btn-primary" onclick="updateVote()" style="width: 150px;">
+                                Update Vote
+                            </button>
+                        @endif
+                    </div>
+                </div>
+
                 <input type="hidden" class="form-control" id="status" name="status" value="{{ $menusDeck->status }}">
 
                 <div class="mb-3">
@@ -42,7 +61,7 @@
                     <div class="d-flex flex-row justify-content-between">
                         <!-- Save edit button -->
                         <div>
-                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                            <button type="btn" class="btn btn-primary" onclick="handleSaveClick()">Simpan Perubahan</button>
                             <a href="{{ route('menus-deck.index') }}" class="btn btn-secondary">Batal</a>
                         </div>
 
@@ -65,28 +84,28 @@
                         <div class="d-flex align-items-center">
                             <label for="status" class="form-label">Status: </label>
                             <div class="ms-2 px-2 py-1 rounded" style="
-                                        width: 135px;
-                                        background-color:
-                                        @if ($menusDeck->status_lunas == "Paid")
-                                            #b6f2b6
-                                        @elseif ($menusDeck->status_lunas == "Half Paid")
-                                            #a5d8ff
-                                        @else
-                                            #ffd2d2
-                                        @endif
-                                        ;
+                                width: 135px;
+                                background-color:
+                                @if ($menusDeck->status_lunas == "Paid")
+                                    #b6f2b6
+                                @elseif ($menusDeck->status_lunas == "Half Paid")
+                                    #a5d8ff
+                                @else
+                                    #ffd2d2
+                                @endif
+                                ;
 
-                                        border: 1px solid
-                                        @if ($menusDeck->status_lunas == "Paid")
-                                            #59c459
-                                        @elseif ($menusDeck->status_lunas == "Half Paid")
-                                            #1971c2
-                                        @else
-                                            #ff7a7a
-                                        @endif
-                                        ;
-                                        text-align: center;
-                                    ">
+                                border: 1px solid
+                                @if ($menusDeck->status_lunas == "Paid")
+                                    #59c459
+                                @elseif ($menusDeck->status_lunas == "Half Paid")
+                                    #1971c2
+                                @else
+                                    #ff7a7a
+                                @endif
+                                ;
+                                text-align: center;
+                            ">
                                 {{ $menusDeck->status_lunas }}
                             </div>
                         </div>
@@ -105,15 +124,15 @@
                         <div class="col-auto">
                             <label for="harga_menu">Harga Menu</label>
                             <input type="text" id="harga_menu" name="harga_menu" class="form-control"
-                                value="{{ 'Rp. ' . number_format($menusDeck->menu->harga, 0, ',', '.') }}" disabled>
+                                value="{{ 'Rp. ' . number_format($menusDeck->harga_menu, 0, ',', '.') }}" disabled>
                         </div>
                         @php
-                            // Ambil data expense pertama jika ada
-                            if ($expenses->isNotEmpty()) {
-                                $firstExpense = $expenses->first()->jumlah_biaya;
-                            } else {
-                                $firstExpense = 0;
-                            }
+    // Ambil data expense pertama jika ada
+    if ($expenses->isNotEmpty()) {
+        $firstExpense = $expenses->first()->jumlah_biaya;
+    } else {
+        $firstExpense = 0;
+    }
                         @endphp
                         <div class="col-auto">
                             <label for="total_harga">Total Harga</label>
@@ -239,7 +258,17 @@
     <script src="/bootstrap/js/bootstrap.min.js"></script>
 
     <script>
+        function handleSaveClick() {
+            const form = document.getElementById('formEdit');
+            document.getElementById('status').value = 0;
+            document.getElementById('total_serve').removeAttribute('required');
+            document.getElementById('harga_menu').removeAttribute('required');
+            form.requestSubmit();
+        }
+
         function handleConfirmClick() {
+            document.getElementById('total_serve').setAttribute('required', 'required');
+            document.getElementById('harga_menu').setAttribute('required', 'required');
             const form = document.getElementById('formEdit');
 
             // Validasi form field
@@ -252,9 +281,17 @@
             }
         }
 
+        // Untuk konfirmasi menu
         function confirmMenu() {
-            // Set field status jadi 1 (confirmed)
             document.getElementById('status').value = 1;
+            document.getElementById('formEdit').requestSubmit();
+        }
+
+        // Hanya ada saat menu sudah dikonfirmasi
+        function updateVote() {
+            document.getElementById('total_serve').setAttribute('required', 'required');
+            document.getElementById('harga_menu').setAttribute('required', 'required');
+            document.getElementById('status').value = 2;
             document.getElementById('formEdit').requestSubmit();
         }
     </script>

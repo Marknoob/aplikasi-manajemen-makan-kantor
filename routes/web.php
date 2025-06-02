@@ -9,6 +9,7 @@ use App\Http\Controllers\MenusDeckExpensesController;
 use App\Http\Controllers\MenusDeckPaymentsController;
 use App\Http\Controllers\MenusRecomenderController;
 use App\Http\Controllers\VendorsController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,12 @@ Route::get('/dashboard/pengeluaran', [DashboardController::class, 'pengeluaran']
     ->middleware(['auth', 'verified']);
 Route::get('/dashboard/pembayaran', [DashboardController::class, 'pembayaran'])
     ->name('dashboard.pembayaran')
+    ->middleware(['auth', 'verified']);
+
+
+// route ke cosine-similarity dengan membawa nilai Menu:all()
+Route::get('/cosine-similarity', action: [DashboardController::class, 'cosineSimilarity'])
+    ->name('cosine.similarity')
     ->middleware(['auth', 'verified']);
 
 

@@ -7,24 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Menu extends Model
 {
     protected $table = 'menus';
-    // protected $fillable = [
-    //     'nama_menu',
-    //     'karbohidrat',
-    //     'protein',
-    //     'sayur',
-    //     'buah',
-    //     'kategori_bahan_utama',
-    //     'vendor_id',
-    //     'harga',
-    //     'jumlah_vote',
-    //     'terakhir_dipilih',
-    //     'is_active',
-    // ];
 
     protected $fillable = [
         'nama_menu',
         'category_id',
         'vendor_id',
+        'harga',
         'terakhir_dipilih',
         'is_active',
     ];

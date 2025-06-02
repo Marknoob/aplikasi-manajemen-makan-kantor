@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class MenusCategory  extends Model
 {
     protected $table = 'menus_category';
-    
+
     protected $fillable = [
         'kategori_bahan_utama',
         'keterangan',

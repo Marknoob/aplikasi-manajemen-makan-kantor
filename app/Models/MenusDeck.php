@@ -11,6 +11,8 @@ class MenusDeck extends Model
     protected $fillable = [
         'menu_id',
         'total_serve',
+        'harga_menu',
+        'jumlah_vote',
         'status',
         'tanggal_pelaksanaan',
     ];
