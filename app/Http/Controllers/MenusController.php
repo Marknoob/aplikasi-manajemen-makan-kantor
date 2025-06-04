@@ -56,6 +56,7 @@ class MenusController extends Controller
             ->where('is_active', true)
             ->get();
         $buahList = MenusComponent::where('jenis_komponen', 'buah')
+            ->orWhere('jenis_komponen', 'minuman')
             ->where('is_active', true)
             ->get();
 
@@ -66,6 +67,7 @@ class MenusController extends Controller
     {
         $validated = $request->validate([
             'nama_menu' => 'required|string|max:255',
+            'harga' => 'nullable|numeric|min:0',
             'kategori_bahan_utama' => 'required|exists:menus_category,id',
             'vendor_id' => 'required|exists:vendors,id',
             'selected_komponen' => 'required|string', // JSON string dari js
@@ -76,9 +78,10 @@ class MenusController extends Controller
 
         // Buat menu
         $menu = Menu::create([
-            'nama_menu' => $validated['nama_menu'],
-            'category_id' => $validated['kategori_bahan_utama'],
-            'vendor_id' => $validated['vendor_id'],
+            'nama_menu' => $request->nama_menu,
+            'harga' => $request->harga_menu,
+            'category_id' => $request->kategori_bahan_utama,
+            'vendor_id' => $request->vendor_id,
             'terakhir_dipilih' => $request->input('terakhir_dipilih'),
             'is_active' => true,
         ]);
@@ -116,6 +119,7 @@ class MenusController extends Controller
             ->where('is_active', true)
             ->get();
         $buahList = MenusComponent::where('jenis_komponen', 'buah')
+            ->orWhere('jenis_komponen', 'minuman')
             ->where('is_active', true)
             ->get();
 
@@ -134,6 +138,7 @@ class MenusController extends Controller
     {
         $validated = $request->validate([
             'nama_menu' => 'required|string|max:255',
+            'harga' => 'nullable|numeric|min:0',
             'kategori_bahan_utama' => 'required|exists:menus_category,id',
             'vendor_id' => 'required|exists:vendors,id',
             'selected_komponen' => 'required|string', // JSON string dari JS
@@ -144,6 +149,7 @@ class MenusController extends Controller
 
         $menu->update([
             'nama_menu' => $validated['nama_menu'],
+            'harga' => $request->harga_menu,
             'category_id' => $validated['kategori_bahan_utama'],
             'vendor_id' => $validated['vendor_id'],
             'terakhir_dipilih' => $request->input('terakhir_dipilih'),

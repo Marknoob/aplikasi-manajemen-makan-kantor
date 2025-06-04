@@ -127,12 +127,12 @@
                                 value="{{ 'Rp. ' . number_format($menusDeck->harga_menu, 0, ',', '.') }}" disabled>
                         </div>
                         @php
-    // Ambil data expense pertama jika ada
-    if ($expenses->isNotEmpty()) {
-        $firstExpense = $expenses->first()->jumlah_biaya;
-    } else {
-        $firstExpense = 0;
-    }
+                            // Ambil data expense pertama jika ada
+                            if ($expenses->isNotEmpty()) {
+                                $firstExpense = $expenses->first()->jumlah_biaya;
+                            } else {
+                                $firstExpense = 0;
+                            }
                         @endphp
                         <div class="col-auto">
                             <label for="total_harga">Total Harga</label>

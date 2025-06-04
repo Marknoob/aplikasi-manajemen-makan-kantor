@@ -47,7 +47,11 @@
                     </button>
                 </div>
 
-                {{-- Kategori dan Vendor --}}
+                <div class="mb-3">
+                    <label for="harga_menu" class="form-label">Harga Menu</label>
+                    <input type="number" id="harga_menu" name="harga_menu" class="form-control">
+                </div>
+
                 <div class="mb-3">
                     <label for="kategori_bahan_utama" class="form-label">Kategori Bahan Utama</label>
                     <select class="form-control" id="kategori_bahan_utama" name="kategori_bahan_utama" required>
