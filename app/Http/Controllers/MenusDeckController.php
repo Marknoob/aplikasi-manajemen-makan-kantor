@@ -95,6 +95,7 @@ class MenusDeckController extends Controller
         $menus = Menu::with('details.component', 'category')
             ->whereNull('terakhir_dipilih')
             ->where('is_active', true)
+            ->orderBy('created_at', 'desc')
             ->get();
         $tanggal_pelaksanaan = $request->query('tanggal_pelaksanaan');
         return view('menus-deck.create', compact('menus', 'tanggal_pelaksanaan'));
@@ -198,6 +199,7 @@ class MenusDeckController extends Controller
         if ($request->status == 1) {
             $menusDeck->update([
                 'status' => $request->status,
+                'total_serve' => $request->total_serve,
             ]);
             
             MenuDeckExpense::create([

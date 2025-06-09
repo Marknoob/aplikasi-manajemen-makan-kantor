@@ -192,6 +192,9 @@
                 });
             });
 
+            // Urutkan dari similarity tertinggi ke terendah
+            results.sort((a, b) => b.similarity - a.similarity);
+
             return results;
         }
 
