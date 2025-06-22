@@ -618,7 +618,7 @@
         document.getElementById('periode').addEventListener('change', function () {
             const [year, month] = this.value.split('-');
             if (year && month) {
-                window.location.href = `{{ route('menus-deck.index') }}?tahun=${year}&bulan=${month}`;
+                window.location.href = `{{ route('menus-recommender.index') }}?tahun=${year}&bulan=${month}`;
             }
         });
     </script>
