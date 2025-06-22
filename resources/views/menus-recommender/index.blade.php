@@ -381,10 +381,10 @@
             }
 
             // Jika jumlah menu yang tersedia kurang dari slot yang harus diisi, tampilkan modal
-            if (availableMenus.length < totalSlotToFill) {
-                const notEnoughModal = new bootstrap.Modal(document.getElementById('notEnoughMenusModal'));
-                notEnoughModal.show();
-            }
+            // if (availableMenus.length < totalSlotToFill) {
+            //     const notEnoughModal = new bootstrap.Modal(document.getElementById('notEnoughMenusModal'));
+            //     notEnoughModal.show();
+            // }
 
             // Generate menu berdasarkan week / month yang dipilih
             let index = 0;
