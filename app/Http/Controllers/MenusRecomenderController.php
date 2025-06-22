@@ -17,7 +17,7 @@ class MenusRecomenderController extends Controller
         // $tahun = 2025;
         $bulan = $request->query('bulan', now()->month);
         $tahun = $request->query('tahun', now()->year);
-        // $periode = sprintf('%04d-%02d', $tahun, $bulan);
+        $periode = sprintf('%04d-%02d', $tahun, $bulan);
         $bulanTahun = Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y');
 
         $tanggalAwalBulan = Carbon::createFromDate($tahun, $bulan, 1);
@@ -87,10 +87,13 @@ class MenusRecomenderController extends Controller
         $weeksCount = count($weeks);
 
         $menus = Menu::with('vendor:id,id,nama', 'category:id,kategori_bahan_utama')
-            ->whereNull('terakhir_dipilih')
+            ->where(function ($query) {
+                $query->whereNull('terakhir_dipilih')
+                ->orWhere('terakhir_dipilih', '<', Carbon::now()->subDays(30));
+            })
             ->get(['id', 'nama_menu', 'vendor_id', 'category_id', 'harga']);
 
-        return view('menus-recommender.index', compact('weeks', 'bulanTahun', 'tahun', 'bulan', 'weeksCount', 'menus'));
+        return view('menus-recommender.index', compact('weeks', 'bulanTahun', 'tahun', 'bulan', 'periode', 'weeksCount', 'menus'));
     }
 
     public function store(Request $request)

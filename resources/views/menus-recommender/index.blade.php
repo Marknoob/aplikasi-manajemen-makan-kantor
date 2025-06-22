@@ -21,6 +21,11 @@
         </div>
 
         <div class="card p-3">
+            <div class="d-flex justify-content-end mb-5">
+                <input type="month" class="form-control" style="width: 200px" id="periode" name="periode" value="{{ $periode }}">
+                <input type="hidden" id="selectedPeriode">
+            </div>
+
             <div class="mb-3 d-flex justify-content-between">
                 <h4>{{ $bulanTahun }}</h4>
                 <div>
@@ -183,6 +188,33 @@
         </div>
     </div>
 
+    <!-- Modal Konfirmasi Ganti Tanggal -->
+    {{-- <div class="modal fade" id="changeDateModal" tabindex="-1" aria-labelledby="changeDateLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeDateLabel">Konfirmasi Ganti Tanggal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="fs-5 fw-bold">Apakah Anda yakin ingin mengganti Bulan ?</p>
+                    <p class="fs-5 fw-bold"><span id="newDate" class="text-danger"></span></p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn" data-bs-dismiss="modal"
+                        style="background-color: #ffd2d2; border: 1px solid #ff7a7a;">
+                        Batal
+                    </button>
+                    <button type="button" class="btn" id="confirmChangeDateBtn"
+                        style="background-color: #b6f2b6; border: 1px solid #59c459;">
+                        Ya, yakin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div> --}}
+
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -260,14 +292,16 @@
             if (selectedWeekOption >= 1 && selectedWeekOption <= 5) {
                 const selectedWeek = weeksData[selectedWeekOption - 1];
                 selectedWeek.days.forEach(day => {
-                    if (day.menus_deck === null && day.in_month) {
+                    const alreadyExists = tempGeneratedMenu.some(m => m.tanggal_pelaksanaan === day.date);
+                    if (day.menus_deck === null && day.in_month && !alreadyExists) {
                         totalSlotToFill++;
                     }
                 });
             } else if (selectedWeekOption === 6) {
                 weeksData.forEach(week => {
                     week.days.forEach(day => {
-                        if (day.menus_deck === null && day.in_month) {
+                        const alreadyExists = tempGeneratedMenu.some(m => m.tanggal_pelaksanaan === day.date);
+                        if (day.menus_deck === null && day.in_month && !alreadyExists) {
                             totalSlotToFill++;
                         }
                     });
@@ -551,5 +585,41 @@
                 saveForm.submit();
             }
         }
+
+        // Confirm Filter by periode
+        // const selectedPeriodeInput = document.getElementById('selectedPeriode');
+        // const newDateSpan = document.getElementById('newDate');
+
+        // document.getElementById('periode').addEventListener('click', function () {
+        //     // Pakai event 'input' saat user memilih nilai
+        //     document.getElementById('periode').addEventListener('input', function () {
+        //         const selectedValue = document.getElementById('periode').value;
+        //         selectedPeriodeInput.value = selectedValue;
+
+        //         newDateSpan.textContent = selectedValue ? selectedValue : '';
+        //         const modal = new bootstrap.Modal(document.getElementById('changeDateModal'));
+        //         modal.show();
+
+        //         // Reset input agar tidak langsung update
+        //         this.value = "{{ $periode }}";
+        //     }, { once: true });
+        // });
+
+        // // Filter by periode
+        // document.getElementById('confirmChangeDateBtn').addEventListener('click', function () {
+        //     const [year, month] = selectedPeriodeInput.value.split('-');
+        //     if (year && month) {
+        //         // alert("year: " + year + ", month: " + month);
+        //         window.location.href = `{{ route('menus-recommender.index') }}?tahun=${year}&bulan=${month}`;
+        //     }
+        // });
+
+        // Filter by periode
+        document.getElementById('periode').addEventListener('change', function () {
+            const [year, month] = this.value.split('-');
+            if (year && month) {
+                window.location.href = `{{ route('menus-deck.index') }}?tahun=${year}&bulan=${month}`;
+            }
+        });
     </script>
 </x-app-layout>

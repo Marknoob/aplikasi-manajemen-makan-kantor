@@ -42,8 +42,8 @@ class MenusController extends Controller
 
     public function create()
     {
-        $vendors = Vendor::all();
-        $categories = MenusCategory::all();
+        $vendors = Vendor::where('is_active', true)->get();
+        $categories = MenusCategory::where('is_active', true)->get();
 
         // Ambil Komponen berdasarkan jenis Karbohidrat, Protein, Sayur, dan Buah
         $karbohidratList = MenusComponent::where('jenis_komponen', 'karbohidrat')

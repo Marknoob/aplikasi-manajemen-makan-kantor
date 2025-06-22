@@ -10,7 +10,7 @@
             </a>
         </div>
 
-        <div class="p-3 rounded-3" style="border: 1px solid #ddd; white-space: nowrap">
+        <div class="p-3 rounded-3" style="border: 1px solid #ddd;">
 
             <div class="d-flex justify-content-end">
                 <input type="month" class="form-control" style="width: 200px" id="periode" name="periode"

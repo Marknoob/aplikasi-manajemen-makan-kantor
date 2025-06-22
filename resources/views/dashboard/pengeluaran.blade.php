@@ -9,7 +9,7 @@
         </div>
 
         <div class="card p-3">
-            <table class="table table-striped">
+            {{-- <table class="table table-striped">
                 <thead>
                     <tr>
                     <th scope="col" style="width: 40px;">Aksi</th>
@@ -29,6 +29,34 @@
                             <td>{{ $menu->menu->nama_menu }}</td>
                             <td>{{ $menu->tanggal_pelaksanaan ? \Carbon\Carbon::parse($menu->tanggal_pelaksanaan)->format('d M Y') : '-' }}</td>
                             <td>Rp {{ number_format($menu->total_pembayaran ?? 0, 0, ',', '.') }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table> --}}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width: 40px;">Aksi</th>
+                        <th scope="col">Nama Menu</th>
+                        <th scope="col">Tanggal Pembayaran</th>
+                        <th scope="col">Jumlah Bayar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($expenses as $expense)
+                        <tr>
+                            <td>
+                                @if ($expense->menusDeck)
+                                    <a href="{{ route('menus-deck.edit', $expense->menusDeck->id) }}" class="text-decoration-none text-dark">
+                                        <i class="fa-solid fa-eye" style="color: #74C0FC;"></i>
+                                    </a>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>{{ $expense->menusDeck->menu->nama_menu ?? '-' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($expense->tanggal_bayar)->format('d M Y') }}</td>
+                            <td>Rp {{ number_format($expense->jumlah_bayar, 0, ',', '.') }}</td>
                         </tr>
                     @endforeach
                 </tbody>

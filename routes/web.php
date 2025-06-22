@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MenusCategoryController;
+use App\Http\Controllers\MenusComponentController;
 use App\Http\Controllers\MenusController;
 use App\Http\Controllers\MenusDeckController;
 use App\Http\Controllers\MenusDeckExpensesController;
@@ -52,6 +54,8 @@ Route::middleware('auth')->group(function () {
 
 // Master
 Route::resource('menus', MenusController::class)->middleware(['auth', 'verified']);
+Route::resource('menus-category', MenusCategoryController::class)->middleware(['auth', 'verified']);
+Route::resource('menus-component', MenusComponentController::class)->middleware(['auth', 'verified']);
 Route::resource('vendors', VendorsController::class)->middleware(['auth', 'verified']);
 
 

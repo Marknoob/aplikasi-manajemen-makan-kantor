@@ -93,7 +93,10 @@ class MenusDeckController extends Controller
     public function create(Request $request)
     {
         $menus = Menu::with('details.component', 'category')
-            ->whereNull('terakhir_dipilih')
+            ->where(function ($query) {
+                $query->whereNull('terakhir_dipilih')
+                ->orWhere('terakhir_dipilih', '<', Carbon::now()->subDays(30));
+            })
             ->where('is_active', true)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -201,7 +204,7 @@ class MenusDeckController extends Controller
                 'status' => $request->status,
                 'total_serve' => $request->total_serve,
             ]);
-            
+
             MenuDeckExpense::create([
                 'menu_deck_id' => $menusDeck->id,
                 'deskripsi_biaya' => "Biaya Pokok",

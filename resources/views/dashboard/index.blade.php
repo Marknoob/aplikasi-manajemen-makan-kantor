@@ -18,7 +18,7 @@
                                 </div>
                             </div>
                             <div class="mt-3">
-                                <span class="badge bg-danger">{{ $expensePercentage }}% increase</span>
+                                <span class="badge bg-danger">{{ number_format($expensePercentage, 2, '.', ',') }}% increase</span>
                             </div>
                         </div>
                     </div>

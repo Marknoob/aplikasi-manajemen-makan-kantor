@@ -92,7 +92,9 @@ class DashboardController extends Controller
 
         // Tambahkan properti total_biaya ke setiap menusDeck
         foreach ($menusDeck as $deck) {
-            $payments = MenuDeckPayment::where('menu_deck_id', $deck->id)->get();
+            $payments = MenuDeckPayment::where('menu_deck_id', $deck->id)
+                ->whereMonth('tanggal_bayar', $bulan)
+                ->get();
 
             // Total pembayaran
             $total_pembayaran = 0;
@@ -102,7 +104,9 @@ class DashboardController extends Controller
             $deck->total_pembayaran = $total_pembayaran;
         }
 
-        return view('dashboard.pengeluaran', compact('menusDeck', 'periode'));
+        $expenses = MenuDeckPayment::whereMonth('tanggal_bayar', $bulan)->get();
+
+        return view('dashboard.pengeluaran', compact('menusDeck', 'periode', 'expenses'));
     }
 
     public function pembayaran()
