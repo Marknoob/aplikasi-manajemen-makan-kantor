@@ -117,6 +117,7 @@
     <script>
         // Menus Recommender Algorithm
         const menus = @json($menus);
+        // console.log(menus);
 
         function pilihMenu(menuId, menuNama) {
             const menuSelect = document.getElementById('menu_id');
@@ -132,42 +133,63 @@
             modal.hide();
         }
 
-        function getSimilarityScores(menuTarget, menu) {
-            console.log
-            const componentList = [];
+        // function getSimilarityScores(menuTarget, menu) {
+        //     // console.log(menuTarget, menu);
+        //     const componentList = [];
 
-            const addUniqueComponent = (details) => {
-                details.forEach(item => {
-                    const componentId = item.component.id;
-                    if (!componentList.includes(componentId)) {
-                        componentList.push(componentId);
-                    }
-                });
-            };
+        //     const addUniqueComponent = (details) => {
+        //         details.forEach(item => {
+        //             const componentId = item.component.id;
+        //             if (!componentList.includes(componentId)) {
+        //                 componentList.push(componentId);
+        //             }
+        //         });
+        //     };
 
-            // Kumpulkan semua komponen unik dari kedua menu
-            addUniqueComponent(menuTarget.details);
-            addUniqueComponent(menu.details);
+        //     // Kumpulkan semua komponen unik dari kedua menu
+        //     addUniqueComponent(menuTarget.details);
+        //     addUniqueComponent(menu.details);
 
-            // Buat vektor biner untuk kedua menu
-            const buildVector = (details) => {
-                return componentList.map(componentId =>
-                    details.some(item => item.component.id === componentId) ? 1 : 0
-                );
-            };
+        //     // Buat vektor biner untuk kedua menu
+        //     const buildVector = (details) => {
+        //         return componentList.map(componentId =>
+        //             details.some(item => item.component.id === componentId) ? 1 : 0
+        //         );
+        //     };
 
-            const componentMenu1 = buildVector(menuTarget.details);
-            const componentMenu2 = buildVector(menu.details);
+        //     const componentMenu1 = buildVector(menuTarget.details);
+        //     const componentMenu2 = buildVector(menu.details);
 
-            // Hitung cosine similarity
-            const dotProduct = componentMenu1.reduce((acc, val, i) => acc + val * componentMenu2[i], 0);
-            const magnitude1 = Math.sqrt(componentMenu1.reduce((acc, val) => acc + val * val, 0));
-            const magnitude2 = Math.sqrt(componentMenu2.reduce((acc, val) => acc + val * val, 0));
-            console.log(dotProduct, magnitude1, magnitude2);
+        //     // Hitung cosine similarity
+        //     const dotProduct = componentMenu1.reduce((acc, val, i) => acc + val * componentMenu2[i], 0);
+        //     const magnitude1 = Math.sqrt(componentMenu1.reduce((acc, val) => acc + val * val, 0));
+        //     const magnitude2 = Math.sqrt(componentMenu2.reduce((acc, val) => acc + val * val, 0));
+        //     // console.log(dotProduct, magnitude1, magnitude2);
 
-            const similarity = magnitude1 && magnitude2 ? dotProduct / (magnitude1 * magnitude2) : 0;
+        //     const similarity = magnitude1 && magnitude2 ? dotProduct / (magnitude1 * magnitude2) : 0;
 
-            console.log(menuTarget.nama_menu, menu.nama_menu, similarity);
+        //     // console.log(menuTarget.nama_menu, menu.nama_menu, similarity);
+        //     return similarity;
+        // }
+
+        function getSimilarityScores(menuTarget, menuAvailable) {
+            const setA = new Set(menuTarget.details.map(item => item.component.id));
+            const setB = new Set(menuAvailable.details.map(item => item.component.id));
+            console.log(setA, setB);
+
+            const intersection = new Set([...setA].filter(id => setB.has(id)));
+            console.log(intersection);
+
+            const union = new Set([...setA, ...setB]);
+            console.log(union);
+
+            // Mencegah pembagian dengan nol jika kedua menu tidak memiliki komponen sama sekali.
+            if (union.size === 0) {
+                return 0;
+            }
+
+            const similarity = intersection.size / union.size;
+            console.log(intersection.size, union.size, similarity);
             return similarity;
         }
 
