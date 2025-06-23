@@ -103,6 +103,7 @@ class MenusRecomenderController extends Controller
         foreach ($data as $menu) {
             MenusDeck::create([
                 'menu_id' => $menu['menu_id'],
+                'harga_menu' => $menu['harga_menu'],
                 'tanggal_pelaksanaan' => $menu['tanggal_pelaksanaan'],
             ]);
         }

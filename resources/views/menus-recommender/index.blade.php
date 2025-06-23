@@ -396,6 +396,7 @@
                         menu_id: menu.id,
                         nama_menu: menu.nama_menu,
                         nama_vendor: menu.vendor.nama,
+                        harga_menu: menu.harga,
                         tanggal_pelaksanaan: day.date
                     });
                     index++;
