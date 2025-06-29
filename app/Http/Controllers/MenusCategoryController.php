@@ -8,6 +8,25 @@ use Illuminate\Http\Request;
 
 class MenusCategoryController extends Controller
 {
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+
+        $query = MenusCategory::where('is_active', true);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('kategori_bahan_utama', 'like', '%' . $search . '%')
+                ->orWhere('keterangan', 'like', '%' . $search . '%');
+            });
+        }
+
+        $menusCategories = $query->orderBy('created_at', 'desc')
+                ->paginate(10);
+
+        return view('menus-category.index', compact('menusCategories'));
+    }
+
     public function create(Request $request)
     {
         return view('menus-category.create');

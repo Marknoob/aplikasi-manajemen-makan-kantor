@@ -8,6 +8,25 @@ use Illuminate\Http\Request;
 
 class MenusComponentController extends Controller
 {
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+
+        $query = MenusComponent::where('is_active', true);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_komponen', 'like', '%' . $search . '%')
+                ->orWhere('jenis_komponen', 'like', '%' . $search . '%');
+            });
+        }
+
+        $menusComponents = $query->orderBy('created_at', 'desc')
+                ->paginate(10);
+
+        return view('menus-component.index', compact('menusComponents'));
+    }
+
     public function create(Request $request)
     {
         return view('menus-component.create');

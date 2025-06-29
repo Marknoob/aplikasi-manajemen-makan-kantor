@@ -18,6 +18,12 @@
                     <x-nav-link :href="route('vendors.index')" :active="request()->routeIs('vendors.*')">
                         {{ __('Vendors') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('menus-category.index')" :active="request()->routeIs('menus-category.*')">
+                        {{ __('Menu-Category') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('menus-component.index')" :active="request()->routeIs('menus-component.*')">
+                        {{ __('Menu-Component') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('menus.index')" :active="request()->routeIs('menus.*')">
                         {{ __('Menus') }}
                     </x-nav-link>
@@ -25,7 +31,7 @@
                         {{ __('Menus Deck') }}
                     </x-nav-link>
                     <x-nav-link :href="route('menus-recommender.index')" :active="request()->routeIs('menus-recommender.*')">
-                        {{ __('Menus Recommender') }}
+                        {{ __('Menu Recommender') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -85,6 +91,12 @@
             <x-responsive-nav-link :href="route('vendors.index')" :active="request()->routeIs('vendors.*')">
                 {{ __('Vendors') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('menus-category.index')" :active="request()->routeIs('menus-category.*')">
+                {{ __('Menu-Category') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('menus-component.index')" :active="request()->routeIs('menus-component.*')">
+                {{ __('Menu-Component') }}
+            </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('menus.index')" :active="request()->routeIs('menus.*')">
                 {{ __('Menus') }}
             </x-responsive-nav-link>
@@ -92,7 +104,7 @@
                 {{ __('Menus Deck') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('menus-recommender.index')" :active="request()->routeIs('menus-recommender.*')">
-                {{ __('Menus Recommender') }}
+                {{ __('Menu Recommender') }}
             </x-responsive-nav-link>
         </div>
 

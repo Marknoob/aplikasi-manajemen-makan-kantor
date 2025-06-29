@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="m-3">
-        <div class="h2 mb-4">Menus Category</div>
+        <div class="h2 mb-4">Menus Component</div>
 
         <div class="card p-3">
             <form action="{{ route('menus-component.update', $menusComponent->id) }}" method="POST">
