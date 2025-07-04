@@ -3,7 +3,7 @@
         <div class="mb-4 d-flex justify-content-between">
             <div class="me-5">
                 <p class="h2">Generate Menus</p>
-                <p>Set Menus Deck secara otomatis dengan data acak dalam periode waktu tertentu</p>
+                <p>Set Menus Deck secara otomatis dengan data hasil voting dalam periode waktu tertentu</p>
             </div>
             <div class="d-inline-flex">
                 <div class="d-flex align-items-center me-2">

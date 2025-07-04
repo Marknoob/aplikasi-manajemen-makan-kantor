@@ -161,14 +161,11 @@ class DashboardController extends Controller
     {
         $idMenu1 = 2;
         $idMenu2 = 4;
-        // Ambil semua menu (misal untuk dropdown atau referensi)
         $allMenus = Menu::all();
 
-        // Ambil menu dengan ID 1 dan 3
         $menu1 = Menu::with('details.component')->find($idMenu1);
         $menu2 = Menu::with('details.component')->find($idMenu2);
 
-        // Jika ingin ambil hanya detail aktif
         $menu1Details = MenusDetail::with('component')
             ->where('menu_id', $idMenu1)
             ->where('is_active', true)
@@ -180,5 +177,83 @@ class DashboardController extends Controller
             ->get();
 
         return view('cosine-similarity', compact('allMenus', 'menu1', 'menu2', 'menu1Details', 'menu2Details'));
+    }
+
+    public function jaccardSimilarity()
+    {
+        // Calculate Vizualization
+        $idMenu1 = 2; // Target Menu
+        $idMenu2 = 4;
+
+        $menu1 = Menu::with('details.component')->find($idMenu1);
+        $menu2 = Menu::with('details.component')->find($idMenu2);
+
+        $menu1Details = MenusDetail::with('component')
+            ->where('menu_id', $idMenu1)
+            ->where('is_active', true)
+            ->get();
+
+        $menu2Details = MenusDetail::with('component')
+            ->where('menu_id', $idMenu2)
+            ->where('is_active', true)
+            ->get();
+
+
+        // Accuracy Calculation
+        $allMenus = Menu::with('details.component', 'category')
+            ->where('id', '!=', $idMenu1)
+            ->get();
+
+        // // Ambil expected menus dengan kategori bahan utama yang sama
+        // $expectedMenus = Menu::whereHas('category', function ($query) use ($menu1) {
+        //     $query->where('kategori_bahan_utama', $menu1->category->kategori_bahan_utama);
+        // })
+        //     ->where('id', '!=', $idMenu1)
+        //     ->get();
+
+        // return view('jaccard-similarity', compact('menu1', 'menu2', 'menu1Details', 'menu2Details', 'allMenus', 'expectedMenus'));
+
+
+        // // Langkah 1: Hitung jumlah menu per kategori bahan utama
+        // $kategoriCounts = Menu::with('category')
+        //     ->where('id', '!=', $idMenu1)
+        //     ->get()
+        //     ->groupBy(fn($menu) => $menu->category->kategori_bahan_utama)
+        //     ->map(fn($group) => $group->count());
+
+        // // Langkah 2: Ambil jumlah terkecil
+        // $minCount = $kategoriCounts->min();
+
+        // // Langkah 3: Ambil menu sejumlah minCount dari setiap kategori
+        // $balancedMenus = collect();
+        // foreach ($kategoriCounts as $kategori => $count) {
+        //     $menus = Menu::with('details.component', 'category')
+        //         ->whereHas('category', fn($q) => $q->where('kategori_bahan_utama', $kategori))
+        //         ->where('id', '!=', $idMenu1)
+        //         ->limit($minCount)
+        //         ->get();
+
+        //     $balancedMenus = $balancedMenus->merge($menus);
+        // }
+
+        // // AllMenus hasil sampling seimbang
+        // $allMenus = $balancedMenus;
+
+        // Ambil expected menus dengan kategori bahan utama yang sama
+        // $expectedMenus = Menu::whereHas('category', function ($query) use ($menu1) {
+        //         $query->where('kategori_bahan_utama', $menu1->category->kategori_bahan_utama);
+        //     })
+        //     ->where('id', '!=', $idMenu1)
+        //     ->get();
+
+        // Ambil expected menus manual
+        $expectedMenus = Menu::with('details.component', 'category')
+            ->where('id', '!=', $idMenu1)
+            ->whereIn('id', [9, 34, 43, 1, 3])
+            ->get();
+
+        return view('jaccard-similarity', compact(
+            'menu1', 'menu2', 'menu1Details', 'menu2Details', 'allMenus', 'expectedMenus'
+        ));
     }
 }

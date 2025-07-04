@@ -38,10 +38,12 @@ Route::get('/dashboard/pembayaran', [DashboardController::class, 'pembayaran'])
     ->name('dashboard.pembayaran')
     ->middleware(['auth', 'verified']);
 
-
-// route ke cosine-similarity dengan membawa nilai Menu:all()
+// Visualization Contend Based Filtering
 Route::get('/cosine-similarity', action: [DashboardController::class, 'cosineSimilarity'])
     ->name('cosine.similarity')
+    ->middleware(['auth', 'verified']);
+Route::get('/jaccard-similarity', action: [DashboardController::class, 'jaccardSimilarity'])
+    ->name('jaccard.similarity')
     ->middleware(['auth', 'verified']);
 
 

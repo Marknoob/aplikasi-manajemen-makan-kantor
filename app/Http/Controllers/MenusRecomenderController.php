@@ -7,6 +7,7 @@ use App\Models\Menu;
 use App\Models\MenusDeck;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MenusRecomenderController extends Controller
 {
@@ -89,9 +90,28 @@ class MenusRecomenderController extends Controller
         $menus = Menu::with('vendor:id,id,nama', 'category:id,kategori_bahan_utama')
             ->where(function ($query) {
                 $query->whereNull('terakhir_dipilih')
-                ->orWhere('terakhir_dipilih', '<', Carbon::now()->subDays(30));
+                    ->orWhere('terakhir_dipilih', '<', Carbon::now()->subDays(30));
             })
-            ->get(['id', 'nama_menu', 'vendor_id', 'category_id', 'harga']);
+            ->leftJoin('menus_deck', 'menus.id', '=', 'menus_deck.menu_id')
+            ->select(
+                'menus.id',
+                'menus.nama_menu',
+                'menus.vendor_id',
+                'menus.category_id',
+                'menus.harga',
+                // Get menu berdasarkan vote
+                DB::raw('SUM(CASE WHEN menus_deck.total_serve IS NOT NULL THEN menus_deck.total_serve ELSE 0 END) as total_serve'),
+                DB::raw('SUM(CASE WHEN menus_deck.jumlah_vote IS NOT NULL THEN menus_deck.jumlah_vote ELSE 0 END) as jumlah_vote'),
+                DB::raw('CASE
+                            WHEN SUM(CASE WHEN menus_deck.total_serve IS NOT NULL THEN menus_deck.total_serve ELSE 0 END) > 0
+                            THEN ROUND(SUM(CASE WHEN menus_deck.jumlah_vote IS NOT NULL THEN menus_deck.jumlah_vote ELSE 0 END) * 100.0 / SUM(CASE WHEN menus_deck.total_serve IS NOT NULL THEN menus_deck.total_serve ELSE 0 END), 2)
+                            ELSE 0
+                        END as vote_percentage')
+            )
+            ->groupBy('menus.id', 'menus.nama_menu', 'menus.vendor_id', 'menus.category_id', 'menus.harga')
+            ->orderByDesc('vote_percentage') // Urutkan berdasarkan persentase vote terbanyak
+            ->get();
+        // dd($menus);
 
         return view('menus-recommender.index', compact('weeks', 'bulanTahun', 'tahun', 'bulan', 'periode', 'weeksCount', 'menus'));
     }

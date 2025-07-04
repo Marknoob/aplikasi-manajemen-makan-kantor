@@ -173,8 +173,17 @@
         // }
 
         function getSimilarityScores(menuTarget, menuAvailable) {
-            const setA = new Set(menuTarget.details.map(item => item.component.id));
-            const setB = new Set(menuAvailable.details.map(item => item.component.id));
+            // const setA = new Set(menuTarget.details.map(item => item.component.id));
+            // const setB = new Set(menuAvailable.details.map(item => item.component.id));
+
+            var tempSetA = menuTarget.details.map(item => item.component.id);
+            tempSetA.push(menuTarget.category.kategori_bahan_utama);
+
+            var tempSetB = menuAvailable.details.map(item => item.component.id);
+            tempSetB.push(menuAvailable.category.kategori_bahan_utama);
+
+            const setA = new Set(tempSetA);
+            const setB = new Set(tempSetB);
             console.log(setA, setB);
 
             const intersection = new Set([...setA].filter(id => setB.has(id)));
